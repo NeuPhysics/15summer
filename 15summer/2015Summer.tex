@@ -1,3 +1,4 @@
+%!TEX program = pdflatex
 \documentclass{tufte-handout}
 %\geometry{showframe}% for debugging purposes -- displays the margins
 
@@ -30,9 +31,9 @@
 % code highlighting
 \usepackage{listings}
 
-\usepackage{minted}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+% \usepackage{minted}
+% \usepackage[utf8]{inputenc}
+% \usepackage[english]{babel}
 
 % Provides paragraphs of dummy text
 
@@ -45,6 +46,14 @@
 \newcommand{\docpkg}[1]{\texttt{#1}}% package name
 \newcommand{\doccls}[1]{\texttt{#1}}% document class name
 \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+
+
+
+% For quantum braket notation
+\newcommand{\bra}[1]{\left\langle #1\right|}
+\newcommand{\ket}[1]{\left| #1\right\rangle}
+\newcommand{\braket}[2]{\langle #1 \mid #2 \rangle}
+\newcommand{\avg}[1]{\left< #1 \right>}
 
 \begin{document}
 
@@ -61,16 +70,116 @@
 Schrodinger equation is
 
 \begin{equation}
-i\partial_t \Psi = \mathbf H \Psi,
+i\partial_t \ket{\Psi} = \mathbf H \ket{\Psi},
 \end{equation}
 
-where for relativistic neutrinos, the energy is
+where for relativistic neutrinos, the energy is\footnote{They all have the same momentum but different mass. The thing is we assume they have the same velocity since the mass is very small. To have an idea of the velocity difference, I can calculate the distance travelled by another neutrino in the frame of one neutrino.\newline {\bf To Be Discussed!} \newline Will decoherence happen due to this? }
 
 \begin{align*}
-\mathbf H &= \sqrt{p^2 + m^2} \\
-&= p\sqrt{1 + \frac{m^2}{p^2}} \\
-&\approx p(1 + \frac{1}{2} \frac{m^2}{p^2}).
+\mathbf H^m &= \begin{pmatrix}\sqrt{p^2 + m_1^2} & 0 & 0 \\ 0& \sqrt{p^2 + m_2^2} & 0 \\ 0 & 0 & \sqrt{p^2 + m_3^2}  \end{pmatrix},
 \end{align*}
+
+in which the energy terms are simplified using the relativistic condition
+
+\begin{align}
+\sqrt{p^2+m_i^2} & = p\sqrt{1 + \frac{m_i^2}{p^2}} \\
+&\approx  p(1 + \frac{1}{2} \frac{m_i^2}{p^2}).
+\end{align}
+
+
+In general the flavor eigenstates are the mixing of the mass eigenstates with a unitary matrix $\mathbf U$, that is
+
+\begin{equation}
+\ket{\nu_{\alpha}} =  U_{\alpha i} \ket{\nu_i},
+\end{equation}
+
+where the $\alpha$s are indices for flavor states while the $i$s are indices for mass eigenstates.
+
+To find out the equation of motion for flavor states, plugin in the initary tranformation,
+
+\begin{equation}
+i  U_{\alpha i} \partial_t \ket{\nu_i} =  U_{\alpha i}  H^m_{ij} \ket{\nu_j}.
+\end{equation}
+
+I use index ${}^m$ for representation of Hamiltonian in mass eigenstates. Applying the unitary condition of the transformation,
+
+\begin{equation}
+\mathbf I = \mathbf {U^\dagger} \mathbf U,
+\end{equation}
+
+I get
+
+\begin{equation}
+i U_{\alpha i} \partial_t \ket{\nu_i} =  U_{\alpha i} H^m_{i j}  {U^\dagger_{j\beta}}  U_{\beta k} \ket{\nu_k},
+\end{equation}
+
+which is simplified to
+
+\begin{equation}
+i \partial_t \ket{\nu_\alpha} = H^f_{\alpha \beta} \ket{\nu_{\beta}},
+\end{equation}
+
+since the transformation is time independent.
+
+The new Hamiltonian in the representations of flavor eigenstates reads
+
+\begin{equation}
+H^f_{\alpha\beta}  = U^\dagger_{\alpha i} H^m_{ij} U_{j\beta}.
+\end{equation}
+
+
+
+\subsection{Survival Probability}
+
+
+The neutrino states at any time can be written as
+
+\begin{equation}
+\ket{\Psi(t)}  = X_1 \ket{\nu_1 } e^{-i E_1 t}+ X_2 \ket{ \nu_2 } e^{-i E_2 t},
+\end{equation}
+
+where $X_1$ and $X_2$ are the initial conditions which are determined using the neutrino initial states.
+
+Survival probalility is the squrare of the projection on an flavor eigenstate,
+
+\begin{equation}
+P_{\alpha}(t) = \lvert \braket{\nu_{\alpha}}{\Psi(t)} \rvert^2.
+\end{equation}
+
+The calculation of this expression requires our knowledge of the relation between mass eigenstates and flavor eigenstates which we have already found out.
+
+Recall that the transformation between flavor and mass states is
+
+\begin{equation}
+\ket{\nu_i} = U^{-1}_{i\alpha} \ket{\nu_\alpha},
+\end{equation}
+
+which leads to the inner product of mass eigenstates and flavor eigenstates,
+
+\begin{align}
+\braket{\nu_\alpha}{\nu_i} &= \bra{\nu_\alpha} U^{-1}_{i\beta} \ket{\nu_\beta} \\
+& = U^{-1}_{i\beta}\delta_{\alpha\beta} \\
+7 = U^{-1}_{i\alpha}.
+\end{align}
+
+
+The survival probability becomes
+
+\begin{align*}
+P_\alpha (t) &= \lvert \braket{\nu_\alpha}{ X_1 \ket{\nu_1 } e^{-i E_1 t} X_2 \ket{ \nu_2 } e^{-i E_2 t} }  \rvert^2 \\
+& = \lvert  X_1 e^{-i E_1 t} \braket{\nu_\alpha}{\ket{\nu_1} } + X_2 e^{-i E_2 t} \braket{ \nu_\alpha }{ \nu_2 } \rvert^2 \\
+& = \lvert \sum_i X_i e^{-i E_i t} U^{-1}_{i \alpha}  \rvert ^2 \\
+& = \sum_i X_1^* e^{iE_i t} U^{\dagger *}_{i\alpha} \sum_i X_i e^{-i E_i t} U^\dagger_{i \alpha} \\
+& = \lvert X_1 \rvert^2 U^{\dagger *}_{1\alpha} U^\dagger_{1\alpha} + \lvert X_2 \rvert^2 U^{\dagger *}_{2\alpha} U^\dagger_{2\alpha}  + X_1^* X_2 U^{\dagger *}_{1\alpha} U^\dagger_{2\alpha} e^{i E_1 t - i E_2 t} + X_2^* X_1 U^{\dagger *}_{2\alpha} U^\dagger_{1\alpha} e^{i E_2 t - i E_1 t}
+\end{align*}
+
+
+$U^{\dagger *}_{i\alpha}$ stands for the $i$th row and the $\alpha$th column of the matrix $U^{\dagger *}$. 
+
+
+
+\subsection{Two Flavor States}
+
 
 For 2 flavor neutrinos the Hamiltonian in the representation of propagation states,
 
@@ -101,8 +210,161 @@ The flavor eigenstate is a mixing of the propagation eigenstates,
 \begin{equation}
 \begin{pmatrix}
 \nu_a \\ \nu_b \end{pmatrix} = 
+\begin{pmatrix} \cos\theta_v & \sin\theta_v \\ -\sin\theta_v  & \cos\theta_v
+\end{pmatrix} \begin{pmatrix}  \nu_1 \\ \nu_2
 \end{pmatrix}
 \end{equation}
+
+
+Denote the rotation matrix using $\mathbf U$, the transofmation can be written as
+
+\begin{equation}
+\ket{\nu_{\alpha}} = \mathbf U_{\alpha i} \ket{\nu_i},
+\end{equation}
+
+where $\alpha$ is for the flavor eigenstates and $i$ is for the mass eigenstates.
+
+The survival probability has been derived in previous section, which is the projection of propagation states onto flavor states.
+
+For arbitary initial condition,
+
+\begin{align}
+    \Psi(t=0)= A \ket{\nu_a} + B \ket{\nu_b}, 
+\end{align}
+
+which can be rewritten into a matrix form,
+
+\begin{align}
+    \Psi(t=0) = \begin{pmatrix}
+    A & B 
+\end{pmatrix}\begin{pmatrix}
+    \nu_a \\
+    \nu_b 
+\end{pmatrix}
+\end{align}
+
+
+
+To write down the projection, the relation
+
+\begin{align}
+    \begin{pmatrix}
+        \nu_a \\
+        \nu_b
+    \end{pmatrix} = \begin{pmatrix}
+        \cos\theta_v & \sin\theta_v \\ -\sin\theta_v  & \cos\theta_v
+\end{pmatrix} \begin{pmatrix}  \nu_1 \\ \nu_2
+\end{pmatrix}
+\end{align}
+
+is needed. BTW, the inverse transformation is the transpose of $\mathbf U$ since $\mathbf U$ is unitary, thus we have the relation,
+
+\begin{align}
+\begin{pmatrix}
+    \nu_1 \\
+    \nu_2
+\end{pmatrix} = \begin{pmatrix}
+\cos\theta_v & -\sin\theta_v \\
+\sin\theta_v & \cos\theta_v
+\end{pmatrix} \begin{pmatrix}
+    \nu_a \\
+    \nu_b
+\end{pmatrix}
+\end{align}
+
+Thus in the state can be written as
+
+\begin{align}
+    \Psi(t=0) = \begin{pmatrix}
+        A & B 
+    \end{pmatrix} \begin{pmatrix}
+        \cos\theta_v & \sin\theta_v \\
+        -\sin\theta_v & \cos\theta_v 
+    \end{pmatrix}\begin{pmatrix}
+        \nu_1 \\
+        \nu_2
+    \end{pmatrix}.
+\end{align}
+
+At any $t$, the state is
+
+\begin{align}
+    \Psi(t) &= \begin{pmatrix}
+        A \cos\theta_v - B \sin\theta_v & A\sin\theta_v + B \cos\theta_v
+    \end{pmatrix} \begin{pmatrix}
+        \nu_1 e^{-i E_1 t}\\
+        \nu_2 e^{-i E_2 t}
+    \end{pmatrix} \\
+    & = \begin{pmatrix}
+        (A \cos\theta_v - B \sin\theta_v) e^{-iE_1 t} & (A\sin\theta_v + B \cos\theta_v
+        ) e^{-iE_2t}\end{pmatrix} \begin{pmatrix}
+        \nu_1 \\
+        \nu_2
+    \end{pmatrix}
+\end{align}
+
+The survival probability which is projection on a flavor state is written as
+
+\begin{equation}
+    P(\nu_\alpha,t) = \lvert \braket{\nu_\alpha}{\Psi(t)} \rvert^2.
+\end{equation}
+
+The survival amplitude for $\nu_a$ is
+
+\begin{align*}
+    &\phantom{=}\braket{\nu_a}{\Psi(t)} \\
+    & = \bra{\nu_a}\left(   \(A \cos\theta_v - B \sin\theta_v) e^{-iE_1 t} \ket{\nu_1} +  (A\sin\theta_v + B \cos\theta_v
+    ) e^{-iE_2t} \ket{\nu_2} \right) \\
+    & = \left( \cos\theta_v \bra{\nu_1} + \sin\theta_v \bra{\nu_2} \right)  \left(   (\(A \cos\theta_v - B \sin\theta_v) e^{-iE_1 t} \ket{\nu_1} +  (A\sin\theta_v + B \cos\theta_v
+    ) e^{-iE_2t} \ket{\nu_2} \right)
+\end{align*}
+
+THis is simple since the transformation matrix is real.
+
+Applying the condition that the propagation eigenstates are orthonormal, the survival probability is
+
+\begin{align*}
+    P(\nu_a,t) & = \lvert \braket{\nu_a}{\Psi(t)}\rvert^2 \\
+    & = \lvert \cos\theta_v (A\cos\theta_v -B\sin\theta_v) e^{-iE_1t} + \sin\theta_v(A\sin\theta_v + B \cos\theta_v) e^{-iE_2t} \rvert^2\\
+    & =\lvert ( A \cos^2\theta_v - B \sin\theta_v \cos\theta_v ) e^{-iE_1t} + ( A \sin^2\theta_v + B \sin\theta_v \cos\theta_v )e^{-iE_2t} \rvert^2
+\end{align*}
+
+In a special limit that $E_1=E_2=E$, the probability becomes
+
+\begin{equation}
+    P(\nu_a,t) = \lvert A\rvert^2 
+\end{equation}
+
+which is the same as initial probability since there is no mixing at all.
+
+There are two kinds of initial conditions.
+
+\begin{itemize}
+    \item
+    The neutrinos are all in $\nu_a$ state initially, which means $A=1, B=0$. The survival probability simplifies to
+    \begin{align*}
+    P(\nu_a,t) & = \lvert \cos^2\theta_v e^{-iE_1t} + \sin^2\theta_v e^{-iE_2t} \rvert^2  \\
+    & = \lvert \cos^2\theta_v e^{-i(E_1 - E_2) t} + \sin^2\theta_v \rvert^2
+    \end{align*}
+    
+    As we have already discussed, $E_1-E_2 = \frac{m_1^2 - m_2^2}{2p^2}$ assuming the neutrinos have the same momentum. \footnote{And here is a question.} Using the notation $\Delta \, m^2 = m_1^2 - m_2^2$ and the approximation that $E\approx p$, the survival probability can be rewritten as
+    \begin{align*}
+    P(\nu_a,t) & = \cos^4\theta_v + \sin^4\theta_v + \cos^2\theta_v \sin^2\theta_v \left( e^{-i \Delta m^2 t/E} + e^{i \Delta m^2 t/E} \right) \\
+    & = 1 - 2\cos^2\theta_v \sin^2\theta_v 
+    \end{align*}
+    
+    
+    
+    
+    
+    \item
+\end{itemize}
+
+
+\subsection{Three Flavor States}
+
+For three flavor neutrinos, the oscillations matrix is 3 by 3. To find it, I can do more about something.
+
 
 
 
